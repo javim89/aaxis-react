@@ -1,10 +1,11 @@
 import { useState } from "react"
-import { Box, Card, Grid, Select, TextField, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Box, Card, Grid, Select, TextField, MenuItem, FormControl, InputLabel, IconButton } from "@mui/material";
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import axios from "axios";
 import { useQuery } from "react-query";
 import { useMemo } from "react";
 import currenciesData from "./currencies.json"
+import { useEffect } from "react";
 
 const getCurrencies = async () => {
   const currencies = new Promise((resolve) => {
@@ -22,20 +23,35 @@ const CurrencyConverterSection = () => {
     refetchOnWindowFocus: false,
   })
 
-  const [currency, setCurrency] = useState("");
-  const handleOnChange = (e) => {
-    setCurrency(e.target.value)
-    console.log(e.target.value)
-  }
-
   const currenciesArray = useMemo(() => {
-    console.log(currencies)
     return Object.entries(currencies.data).map(([code, details]) => ({
       code,
       ...details
     }));
   }, [currencies])
 
+  const [currencyOne, setCurrencyOne] = useState(currenciesArray[0]);
+  const [currencyTwo, setCurrencyTwo] = useState(currenciesArray[1]);
+  
+  const handleOnChangeCurrencyOne = (e) => {
+    const currency = currenciesArray.find((c) => c.code == e.target.value)
+    setCurrencyOne(currency)
+  }
+
+  const handleOnChangeCurrencyTwo = (e) => {
+    const currency = currenciesArray.find((c) => c.code == e.target.value)
+    setCurrencyTwo(currency);
+  }
+
+  const handleSwitchCurrency = () => {
+    setCurrencyOne(currencyTwo)
+    setCurrencyTwo(currencyOne)
+  }
+
+  useEffect(() => {
+    console.log({currencyOne})
+    console.log({currencyTwo})
+  }, [currencyOne, currencyTwo])
   return (
     <Card variant="outlined" sx={{
       padding: "30px"
@@ -46,13 +62,13 @@ const CurrencyConverterSection = () => {
           sm: 1
         }}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">USD</InputLabel>
+            <InputLabel id="demo-simple-select-label">{currencyOne.code}</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={currency}
+              value={currencyOne.code}
               label="Currency"
-              onChange={handleOnChange}
+              onChange={handleOnChangeCurrencyOne}
             >
               {currenciesArray.map((currencie) => (
                 <MenuItem key={currencie.code} value={currencie.code}>{currencie.name}</MenuItem>
@@ -65,26 +81,28 @@ const CurrencyConverterSection = () => {
           sm: 4
         }}>
           <FormControl fullWidth>
-            <TextField id="outlined-basic" label="Usd" variant="outlined" type="number" />
+            <TextField id="outlined-basic" label={currencyOne.code} variant="outlined" type="number" />
           </FormControl>
         </Grid>
         <Grid item xs={12} component={Box} order={{ xs: 5, sm: 3 }} display={"flex"} justifyContent={{
           xs: "flex-end",
           sm: "center"
         }}>
-          <ImportExportIcon sx={{
-            transform: "rotate(90deg)"
-          }} />
+          <IconButton onClick={handleSwitchCurrency}>
+            <ImportExportIcon sx={{
+              transform: "rotate(90deg)"
+            }} />
+          </IconButton>
         </Grid>
         <Grid item xs={12} sm={6} order={{ xs: 3, sm: 2 }}>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">EUR</InputLabel>
+            <InputLabel id="demo-simple-select-label">{currencyTwo.code}</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={currency}
+              value={currencyTwo.code}
               label="Currency"
-              onChange={handleOnChange}
+              onChange={handleOnChangeCurrencyTwo}
             >
               {currenciesArray.map((currencie) => (
                 <MenuItem key={currencie.code} value={currencie.code}>{currencie.name}</MenuItem>
@@ -94,7 +112,7 @@ const CurrencyConverterSection = () => {
         </Grid>
         <Grid item xs={12} sm={6} order={{ xs: 4, sm: 5 }}>
           <FormControl fullWidth>
-            <TextField id="outlined-basic" label="Eur" variant="outlined" type="number" />
+            <TextField id="outlined-basic" label={currencyTwo.code} variant="outlined" type="number" />
           </FormControl>
         </Grid>
       </Grid>
