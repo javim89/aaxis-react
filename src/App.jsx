@@ -1,10 +1,17 @@
-import aaxisLogo from "/aaxis-logo.webp";
+import Layout from '../components/Layout.jsx';
+import { Typography } from '@mui/material';
+import CurrencyConverterSection from '../sections/CurrencyConverterSection.jsx';
 function App() {
   return (
-    <>
-      <h1>Vite + React</h1>
-      <img src={aaxisLogo} loading="lazy" />
-    </>
+    <Layout>
+      <Typography variant="h1" fontWeight={400} gutterBottom sx={{
+        fontSize: "4rem",
+        my: 2
+      }}>
+        Conversor de monedas Aaxis
+      </Typography>
+      <CurrencyConverterSection />
+    </Layout>
   )
 }
 
