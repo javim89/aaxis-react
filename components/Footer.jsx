@@ -10,7 +10,7 @@ const Footer = () => (
     }}
   >
     <Typography variant="h6" align="center" gutterBottom>
-      Conversor de monedas Aaxis
+      Aaxis currencies
     </Typography>
     <Box textAlign={"center"}>
     <IconButton component="a" href='https://www.linkedin.com/in/javiermarengo/' target="_blank" rel="noreferrer">
@@ -20,9 +20,6 @@ const Footer = () => (
       <GitHubIcon />
     </IconButton>
     </Box>
-    {/* <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-      Something here to give the footer a purpose!
-    </Typography> */}
   </Box>
 )
 
