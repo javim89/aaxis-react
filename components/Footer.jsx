@@ -1,14 +1,16 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const Footer = () => (
-  <footer>
+  <Box component={"footer"} sx={{
+    py: 2,
+  }}>
     <Typography variant="h6" align="center" gutterBottom>
       Footer
     </Typography>
     <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
       Something here to give the footer a purpose!
     </Typography>
-  </footer>
+  </Box>
 )
 
 export default Footer

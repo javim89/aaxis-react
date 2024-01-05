@@ -1,23 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Box, Card, Grid, Select, TextField, MenuItem, FormControl, InputLabel, IconButton } from "@mui/material";
 import ImportExportIcon from '@mui/icons-material/ImportExport';
-import axios from "axios";
 import { useQuery } from "react-query";
-import { useMemo } from "react";
-import currenciesData from "./currencies.json"
-import { useEffect } from "react";
+import { getCurrencies, getRate } from "../utils/api";
 
-const getCurrencies = async () => {
-  const currencies = new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(currenciesData)
-    }, 2000)
-  });
-  const res = await currencies;
-  return res
-  // const res = await axios.get(`https://api.freecurrencyapi.com/v1/currencies?apikey=${import.meta.env.VITE_FREE_CURRENCY_API_KEY}&currencies=EUR,USD`)
-  // return res.data
-}
 const CurrencyConverterSection = () => {
   const { data: currencies } = useQuery('currencies', getCurrencies, {
     refetchOnWindowFocus: false,
@@ -32,7 +18,28 @@ const CurrencyConverterSection = () => {
 
   const [currencyOne, setCurrencyOne] = useState(currenciesArray[0]);
   const [currencyTwo, setCurrencyTwo] = useState(currenciesArray[1]);
-  
+  const [currencyOneValue, setCurrencyOneValue] = useState(1);
+  const [currencyTwoValue, setCurrencyTwoValue] = useState();
+
+  const {
+    data: rate,
+    refetch: refetchRate,
+    isFetching: isFetchingRate,
+    isError,
+    error
+  } = useQuery('rate', () => getRate(currencyOne.code, currencyTwo.code), {
+    refetchOnWindowFocus: false,
+    throwOnError: true,
+    onSuccess: (newRate) => {
+      if (currencyOne.code === currencyTwo.code) {
+        setCurrencyTwoValue(currencyOneValue)
+      } else {
+        setCurrencyTwoValue(currencyOneValue * Object.values(newRate.data)[0])
+      }
+    }
+  })
+
+
   const handleOnChangeCurrencyOne = (e) => {
     const currency = currenciesArray.find((c) => c.code == e.target.value)
     setCurrencyOne(currency)
@@ -49,12 +56,15 @@ const CurrencyConverterSection = () => {
   }
 
   useEffect(() => {
-    console.log({currencyOne})
-    console.log({currencyTwo})
-  }, [currencyOne, currencyTwo])
+    refetchRate()
+  }, [currencyOne, currencyTwo, refetchRate])
+
+  if(isError){
+    return(<div>{error.message}</div>)
+  }
   return (
     <Card variant="outlined" sx={{
-      padding: "30px"
+      padding: "30px",
     }}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} order={{
@@ -81,7 +91,18 @@ const CurrencyConverterSection = () => {
           sm: 4
         }}>
           <FormControl fullWidth>
-            <TextField id="outlined-basic" label={currencyOne.code} variant="outlined" type="number" />
+            <TextField
+              id="outlined-basic"
+              label={currencyOne.code}
+              variant="outlined"
+              type="number"
+              onChange={(e) => {
+                setCurrencyOneValue(e.target.value)
+                setCurrencyTwoValue(e.target.value * Object.values(rate.data)[0])
+              }}
+              value={currencyOneValue || ""}
+              disabled={isFetchingRate}
+            />
           </FormControl>
         </Grid>
         <Grid item xs={12} component={Box} order={{ xs: 5, sm: 3 }} display={"flex"} justifyContent={{
@@ -112,7 +133,18 @@ const CurrencyConverterSection = () => {
         </Grid>
         <Grid item xs={12} sm={6} order={{ xs: 4, sm: 5 }}>
           <FormControl fullWidth>
-            <TextField id="outlined-basic" label={currencyTwo.code} variant="outlined" type="number" />
+            <TextField
+              id="outlined-basic"
+              label={currencyTwo.code}
+              variant="outlined"
+              type="number"
+              onChange={(e) => {
+                setCurrencyTwoValue(e.target.value)
+                setCurrencyOneValue(e.target.value / Object.values(rate.data)[0])
+              }}
+              value={currencyTwoValue || ""}
+              disabled={isFetchingRate}
+            />
           </FormControl>
         </Grid>
       </Grid>
