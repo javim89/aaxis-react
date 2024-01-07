@@ -8,6 +8,7 @@ const Footer = () => (
       py: 2,
       backgroundColor: (theme) => theme.palette.primary.main
     }}
+    id="footer"
   >
     <Typography variant="h6" align="center" gutterBottom>
       Aaxis currencies
