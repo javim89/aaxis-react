@@ -1,15 +1,7 @@
 import axios from "axios";
-import currenciesData from "../sections/currencies.json";
 
 export const getCurrencies = async () => {
-  // const currencies = new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve(currenciesData)
-  //   }, 2000)
-  // });
-  // const res = await currencies;
-  // return res
-  const res = await axios.get(`https://api.freecurrencyapi.com/v1/currencies?apikey=${import.meta.env.VITE_FREE_CURRENCY_API_KEY}&currencies=EUR,USD`)
+  const res = await axios.get(`https://api.freecurrencyapi.com/v1/currencies?apikey=${import.meta.env.VITE_FREE_CURRENCY_API_KEY}`)
   return res.data
 }
 

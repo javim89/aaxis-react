@@ -14,7 +14,8 @@ function App() {
   return (
     <Layout>
       <Box display="flex" sx={{
-        height: `calc(100dvh - ${appBarHeight}px - ${footerHeight}px)`
+        height: `calc(100dvh - ${appBarHeight}px - ${footerHeight}px)`,
+        overflow: "scroll"
       }} >
         <Box margin={"auto"}>
           <Typography variant="h1" textAlign={{
@@ -26,7 +27,7 @@ function App() {
           }} sx={{
             my: 2
           }}>
-            Conversor de monedas Aaxis
+            Conversor Aaxis
           </Typography>
           <Suspense fallback={<CurrencyConverterLoading />}>
             <CurrencyConverterSection />

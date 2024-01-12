@@ -11,7 +11,7 @@ const Footer = () => (
     id="footer"
   >
     <Typography variant="h6" align="center" gutterBottom>
-      Aaxis currencies
+      Conversor Aaxis
     </Typography>
     <Box textAlign={"center"}>
     <IconButton component="a" href='https://www.linkedin.com/in/javiermarengo/' target="_blank" rel="noreferrer">
